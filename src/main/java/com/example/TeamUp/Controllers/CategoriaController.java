@@ -15,7 +15,7 @@ import com.example.TeamUp.Entities.CategoriaEntity;
 import com.example.TeamUp.Services.CategoriaService;
 
 @RestController
-@RequestMapping("/api/categorias")
+@RequestMapping("/categorias")
 public class CategoriaController {
 
     private final CategoriaService categoriaService;
@@ -29,8 +29,8 @@ public class CategoriaController {
         return categoriaService.getCategorias();
     }
 
-    @GetMapping("/id")
-    public Optional<CategoriaEntity> getCategoriaById(Long id) {
+    @GetMapping("/{id}")
+    public Optional<CategoriaEntity> getCategoriaById(@PathVariable Long id) {
         return categoriaService.getCategoriaById(id);
     }
 
@@ -45,8 +45,8 @@ public class CategoriaController {
         return categoriaService.saveCategoria(categoria);
     }
 
-    @PostMapping("/delete")
-    public void deleteCategoria(Long id) {
+    @PostMapping("/categorias/{id}/delete")
+    public void deleteCategoria(@PathVariable Long id) {
         categoriaService.deleteCategoria(id);
     }
 
