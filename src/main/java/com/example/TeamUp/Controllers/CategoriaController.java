@@ -45,7 +45,7 @@ public class CategoriaController {
         return categoriaService.saveCategoria(categoria);
     }
 
-    @PostMapping("/categorias/{id}/delete")
+    @PostMapping("/{id}/delete")
     public void deleteCategoria(@PathVariable Long id) {
         categoriaService.deleteCategoria(id);
     }
