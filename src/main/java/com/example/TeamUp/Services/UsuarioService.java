@@ -12,9 +12,10 @@ import com.example.TeamUp.Repositories.UsuarioRepository;
 @Service
 public class UsuarioService {
     
-    private final UsuarioRepository usuarioRepository;
-    
     @Autowired
+    private UsuarioRepository usuarioRepository;
+    
+    
     public UsuarioService(UsuarioRepository usuarioRepository) {
         this.usuarioRepository = usuarioRepository;
     }

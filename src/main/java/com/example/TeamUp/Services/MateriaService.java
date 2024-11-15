@@ -12,9 +12,10 @@ import com.example.TeamUp.Repositories.MateriaRepository;
 @Service
 public class MateriaService {
     
-    private final MateriaRepository materiaRepository;
-
     @Autowired
+    private MateriaRepository materiaRepository;
+
+    
     public MateriaService(MateriaRepository materiaRepository) {
         this.materiaRepository = materiaRepository;
     }

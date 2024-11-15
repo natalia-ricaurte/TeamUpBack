@@ -12,4 +12,7 @@ public class MateriaEntity {
 
     private String nombre;
 
+    @ManyToOne
+    private UsuarioEntity usuario;
+
 }

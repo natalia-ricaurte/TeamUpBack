@@ -1,4 +1,7 @@
 package com.example.TeamUp.Entities;
+import java.util.ArrayList;
+import java.util.List;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -18,5 +21,16 @@ public class UsuarioEntity {
     private String password;
     private Integer reputacion;
     private Integer calificacion;
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    private List<ReviewEntity> reviewsEscritas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    private List<ReviewEntity> reviewsRecibidas = new ArrayList<>();
+
+    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    private List<MateriaEntity> materias = new ArrayList<>();
+
+   
 
 }

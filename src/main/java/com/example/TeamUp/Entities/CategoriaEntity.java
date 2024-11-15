@@ -13,4 +13,7 @@ public class CategoriaEntity {
     private String nombre;
     private String descripcion;
     private Float calificacion;
+
+    @ManyToOne
+    private ReviewEntity review;
 }

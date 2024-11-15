@@ -9,12 +9,16 @@ import org.springframework.stereotype.Service;
 import com.example.TeamUp.Entities.ReviewEntity;
 import com.example.TeamUp.Repositories.ReviewRepository;
 
+import lombok.extern.slf4j.Slf4j;
+
+@Slf4j
 @Service
 public class ReviewService {
     
-    private final ReviewRepository reviewRepository;
-
     @Autowired
+    private ReviewRepository reviewRepository;
+
+    
     public ReviewService(ReviewRepository reviewRepository) {
         this.reviewRepository = reviewRepository;
     }
