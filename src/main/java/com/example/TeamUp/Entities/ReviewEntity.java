@@ -22,7 +22,8 @@ public class ReviewEntity {
     @ManyToOne
     private UsuarioEntity usuarioRecibido;
 
-
+    @ManyToOne
+    private MateriaEntity materia;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.PERSIST)
     private List<CategoriaEntity> categorias = new ArrayList<>();

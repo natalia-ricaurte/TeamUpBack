@@ -14,7 +14,7 @@ import com.example.TeamUp.Entities.ReviewEntity;
 import com.example.TeamUp.Services.ReviewService;
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/reviews")
 public class ReviewController {
 
     private final ReviewService reviewService;

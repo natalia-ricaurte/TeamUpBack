@@ -14,7 +14,7 @@ import com.example.TeamUp.Entities.UsuarioEntity;
 import com.example.TeamUp.Services.UsuarioService;
 
 @RestController
-@RequestMapping("/api/usuarios")
+@RequestMapping("/usuarios")
 public class UsuarioController {
 
     private final UsuarioService usuarioService;

@@ -22,15 +22,12 @@ public class UsuarioEntity {
     private Integer reputacion;
     private Integer calificacion;
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "usuarioEscritor", cascade = CascadeType.PERSIST)
     private List<ReviewEntity> reviewsEscritas = new ArrayList<>();
 
-    @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "usuarioRecibido", cascade = CascadeType.PERSIST)
     private List<ReviewEntity> reviewsRecibidas = new ArrayList<>();
 
     @OneToMany(mappedBy = "usuario", cascade = CascadeType.PERSIST)
     private List<MateriaEntity> materias = new ArrayList<>();
-
-   
-
 }
