@@ -1,4 +1,9 @@
 package com.example.TeamUp.Entities;
+import java.util.ArrayList;
+import java.util.List;
+
+import com.fasterxml.jackson.annotation.JsonBackReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -7,12 +12,13 @@ import lombok.*;
 public class MateriaEntity {
     
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String nombre;
-
-    @ManyToOne
-    private UsuarioEntity usuario;
+    
+    @ManyToMany
+    @JsonBackReference
+    private List<UsuarioEntity> usuarios = new ArrayList<>();
 
 }

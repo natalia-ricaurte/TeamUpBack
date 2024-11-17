@@ -16,7 +16,7 @@ import com.example.TeamUp.Entities.MateriaEntity;
 import com.example.TeamUp.Services.MateriaService;
 
 @RestController
-@RequestMapping("/api/materias")
+@RequestMapping("/materias")
 public class MateriaController {
 
     private final MateriaService materiaService;

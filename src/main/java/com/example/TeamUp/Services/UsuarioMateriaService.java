@@ -27,116 +27,87 @@ public class UsuarioMateriaService {
 
     /**
      * Asocia una materia existente a un usuario.
-     *
-     * @param usuarioId Identificador del usuario.
-     * @param materiaId Identificador de la materia.
-     * @return Instancia de MateriaEntity asociada al usuario.
-     * @throws EntityNotFoundException si el usuario o la materia no existen.
      */
     @Transactional
     public MateriaEntity addMateriaToUsuario(Long usuarioId, Long materiaId) throws EntityNotFoundException {
-        log.info("Inicia proceso de asociar una materia con id = {} al usuario con id = {}", materiaId, usuarioId);
-        Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(usuarioId);
-        Optional<MateriaEntity> materiaEntity = materiaRepository.findById(materiaId);
+        log.info("Inicia proceso de asociar la materia con id = {} al usuario con id = {}", materiaId, usuarioId);
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("El usuario no fue encontrado"));
+        MateriaEntity materia = materiaRepository.findById(materiaId)
+                .orElseThrow(() -> new EntityNotFoundException("La materia no fue encontrada"));
 
-        if (usuarioEntity.isEmpty()) {
-            throw new EntityNotFoundException("El usuario no fue encontrado");
+        if (!usuario.getMaterias().contains(materia)) {
+            usuario.getMaterias().add(materia);
+            materia.getUsuarios().add(usuario);
         }
 
-        if (materiaEntity.isEmpty()) {
-            throw new EntityNotFoundException("La materia no fue encontrada");
-        }
-
-        materiaEntity.get().setUsuario(usuarioEntity.get());
-        usuarioEntity.get().getMaterias().add(materiaEntity.get());
-        materiaRepository.save(materiaEntity.get());
-        log.info("Finaliza proceso de asociar una materia con id = {} al usuario con id = {}", materiaId, usuarioId);
-        return materiaEntity.get();
+        log.info("Finaliza proceso de asociar la materia con id = {} al usuario con id = {}", materiaId, usuarioId);
+        return materia;
     }
 
     /**
      * Obtiene todas las materias asociadas a un usuario.
-     *
-     * @param usuarioId Identificador del usuario.
-     * @return Lista de materias asociadas al usuario.
-     * @throws EntityNotFoundException si el usuario no existe.
      */
     @Transactional
     public List<MateriaEntity> getMateriasByUsuario(Long usuarioId) throws EntityNotFoundException {
         log.info("Inicia proceso de consultar materias asociadas al usuario con id = {}", usuarioId);
-        Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(usuarioId);
-
-        if (usuarioEntity.isEmpty()) {
-            throw new EntityNotFoundException("El usuario no fue encontrado");
-        }
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("El usuario no fue encontrado"));
 
         log.info("Finaliza proceso de consultar materias asociadas al usuario con id = {}", usuarioId);
-        return usuarioEntity.get().getMaterias();
+        return usuario.getMaterias();
     }
 
     /**
      * Reemplaza todas las materias asociadas a un usuario.
-     *
-     * @param usuarioId Identificador del usuario.
-     * @param materias  Lista de materias a asociar al usuario.
-     * @return Lista actualizada de materias asociadas.
-     * @throws EntityNotFoundException si el usuario o alguna materia no existe.
      */
     @Transactional
     public List<MateriaEntity> replaceMateriasInUsuario(Long usuarioId, List<MateriaEntity> materias)
             throws EntityNotFoundException {
         log.info("Inicia proceso de reemplazar materias asociadas al usuario con id = {}", usuarioId);
-        Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(usuarioId);
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("El usuario no fue encontrado"));
 
-        if (usuarioEntity.isEmpty()) {
-            throw new EntityNotFoundException("El usuario no fue encontrado");
-        }
-
+        // Verificar que todas las materias existen
         for (MateriaEntity materia : materias) {
-            Optional<MateriaEntity> materiaEntity = materiaRepository.findById(materia.getId());
-            if (materiaEntity.isEmpty()) {
-                throw new EntityNotFoundException("Una de las materias no fue encontrada");
+            if (!materiaRepository.existsById(materia.getId())) {
+                throw new EntityNotFoundException("La materia con id = " + materia.getId() + " no fue encontrada");
             }
         }
 
-        usuarioEntity.get().getMaterias().clear();
-        usuarioEntity.get().getMaterias().addAll(materias);
+        // Limpiar las relaciones previas
+        usuario.getMaterias().forEach(m -> m.getUsuarios().remove(usuario));
+        usuario.getMaterias().clear();
 
+        // Añadir las nuevas relaciones
         for (MateriaEntity materia : materias) {
-            materia.setUsuario(usuarioEntity.get());
-            materiaRepository.save(materia);
+            materia.getUsuarios().add(usuario);
+            usuario.getMaterias().add(materia);
         }
 
         log.info("Finaliza proceso de reemplazar materias asociadas al usuario con id = {}", usuarioId);
-        return usuarioEntity.get().getMaterias();
+        return usuario.getMaterias();
     }
 
     /**
      * Elimina una materia de un usuario.
-     *
-     * @param usuarioId Identificador del usuario.
-     * @param materiaId Identificador de la materia.
-     * @throws EntityNotFoundException si el usuario o la materia no existen.
      */
     @Transactional
     public void removeMateriaFromUsuario(Long usuarioId, Long materiaId) throws EntityNotFoundException {
         log.info("Inicia proceso de eliminar la materia con id = {} del usuario con id = {}", materiaId, usuarioId);
-        Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(usuarioId);
-        Optional<MateriaEntity> materiaEntity = materiaRepository.findById(materiaId);
+        UsuarioEntity usuario = usuarioRepository.findById(usuarioId)
+                .orElseThrow(() -> new EntityNotFoundException("El usuario no fue encontrado"));
+        MateriaEntity materia = materiaRepository.findById(materiaId)
+                .orElseThrow(() -> new EntityNotFoundException("La materia no fue encontrada"));
 
-        if (usuarioEntity.isEmpty()) {
-            throw new EntityNotFoundException("El usuario no fue encontrado");
+        if (!usuario.getMaterias().contains(materia)) {
+            throw new EntityNotFoundException("La materia con id = " + materiaId + " no está asociada al usuario con id = " + usuarioId);
         }
 
-        if (materiaEntity.isEmpty() || !materiaEntity.get().getUsuario().equals(usuarioEntity.get())) {
-            throw new EntityNotFoundException("La materia no está asociada al usuario");
-        }
-
-        materiaEntity.get().setUsuario(null);
-        usuarioEntity.get().getMaterias().remove(materiaEntity.get());
-        materiaRepository.save(materiaEntity.get());
+        // Remover las relaciones
+        usuario.getMaterias().remove(materia);
+        materia.getUsuarios().remove(usuario);
 
         log.info("Finaliza proceso de eliminar la materia con id = {} del usuario con id = {}", materiaId, usuarioId);
     }
 }
-

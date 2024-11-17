@@ -2,6 +2,8 @@ package com.example.TeamUp.Entities;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -9,7 +11,7 @@ import lombok.*;
 @Data
 public class ReviewEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String texto;
@@ -26,5 +28,6 @@ public class ReviewEntity {
     private MateriaEntity materia;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.PERSIST)
+    @JsonManagedReference
     private List<CategoriaEntity> categorias = new ArrayList<>();
 }
