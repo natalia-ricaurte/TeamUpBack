@@ -34,37 +34,56 @@ public class UsuarioReviewService {
 	 */
 	@Transactional
 	public ReviewEntity addReviewRecibidas(Long usuarioId, Long reviewId) throws EntityNotFoundException {
-		log.info("Inicia proceso de asociarle una reseña al usuario con id = {0}", usuarioId);
+		log.info("Inicia proceso de asociarle una reseña recibida al usuario con id = {}", usuarioId);
 		Optional<ReviewEntity> reviewEntity = reviewRepository.findById(reviewId);
 		Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(usuarioId);
-
+	
 		if (usuarioEntity.isEmpty())
 			throw new EntityNotFoundException("El usuario no fue encontrado");
-
+	
 		if (reviewEntity.isEmpty())
 			throw new EntityNotFoundException("La reseña no fue encontrada");
-
+	
+		// Establecer el usuario como receptor de la reseña
+		reviewEntity.get().setUsuarioRecibido(usuarioEntity.get());
+	
+		// Añadir la reseña a la lista de reviews recibidas
 		usuarioEntity.get().getReviewsRecibidas().add(reviewEntity.get());
-		log.info("Termina proceso de asociarle una review al usuario con id = {0}", usuarioId);
+	
+		// Guardar los cambios
+		reviewRepository.save(reviewEntity.get());
+		usuarioRepository.save(usuarioEntity.get());
+	
+		log.info("Termina proceso de asociarle una reseña recibida al usuario con id = {}", usuarioId);
 		return reviewEntity.get();
 	}
+	
 
 	@Transactional
 	public ReviewEntity addReviewEscrita(Long usuarioId, Long reviewId) throws EntityNotFoundException {
-		log.info("Inicia proceso de asociarle una reseña al usuario con id = {0}", usuarioId);
-		Optional<ReviewEntity> reviewEntity = reviewRepository.findById(reviewId);
-		Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(usuarioId);
+    log.info("Inicia proceso de asociarle una reseña escrita al usuario con id = {}", usuarioId);
+    Optional<ReviewEntity> reviewEntity = reviewRepository.findById(reviewId);
+    Optional<UsuarioEntity> usuarioEntity = usuarioRepository.findById(usuarioId);
 
-		if (usuarioEntity.isEmpty())
-			throw new EntityNotFoundException("El usuario no fue encontrado");
+    if (usuarioEntity.isEmpty())
+        throw new EntityNotFoundException("El usuario no fue encontrado");
 
-		if (reviewEntity.isEmpty())
-			throw new EntityNotFoundException("La reseña no fue encontrada");
+    if (reviewEntity.isEmpty())
+        throw new EntityNotFoundException("La reseña no fue encontrada");
 
-		usuarioEntity.get().getReviewsEscritas().add(reviewEntity.get());
-		log.info("Termina proceso de asociarle una review al usuario con id = {0}", usuarioId);
-		return reviewEntity.get();
-	}
+    // Establecer el usuario como escritor de la reseña
+    reviewEntity.get().setUsuarioEscritor(usuarioEntity.get());
+    
+    // Añadir la reseña a la lista de reviews escritas
+    usuarioEntity.get().getReviewsEscritas().add(reviewEntity.get());
+
+    // Guardar los cambios
+    reviewRepository.save(reviewEntity.get());
+    usuarioRepository.save(usuarioEntity.get());
+
+    log.info("Termina proceso de asociarle una reseña escrita al usuario con id = {}", usuarioId);
+    return reviewEntity.get();
+}
 
 	@Transactional
 	public List<ReviewEntity> addReviews(Long usuarioId, List<ReviewEntity> reviews) throws EntityNotFoundException {
