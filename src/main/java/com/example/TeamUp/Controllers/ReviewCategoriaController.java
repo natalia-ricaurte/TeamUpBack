@@ -3,6 +3,8 @@ package com.example.TeamUp.Controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,6 +20,8 @@ import com.example.TeamUp.Entities.CategoriaEntity;
 import com.example.TeamUp.Entities.ReviewEntity;
 import com.example.TeamUp.Services.CategoriaReviewService;
 import com.example.TeamUp.Services.ReviewCategoriaService;
+import com.example.TeamUp.dto.CategoriaDTO;
+import com.example.TeamUp.dto.CategoriaDetailDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -29,6 +33,9 @@ public class ReviewCategoriaController {
     @Autowired
     private ReviewCategoriaService reviewCategoriaService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     /**
      * Asocia una categoría existente a una reseña.
      *
@@ -37,11 +44,12 @@ public class ReviewCategoriaController {
      * @return La categoría asociada a la reseña.
      */
     @PostMapping(value = "/{reviewId}/categorias/{categoriaId}")
-    @ResponseStatus(code = HttpStatus.OK)
-    public CategoriaEntity addCategoriaToReview(@PathVariable("reviewId") Long reviewId, @PathVariable("categoriaId") Long categoriaId)
-            throws EntityNotFoundException {
-        return reviewCategoriaService.addCategoriaToReview(reviewId, categoriaId);
-    }
+	@ResponseStatus(code = HttpStatus.OK)
+	public CategoriaDetailDTO addCategoriaToReview(@PathVariable("reviewId") Long reviewId, @PathVariable("categoriaId") Long categoriaId)
+			throws EntityNotFoundException {
+		CategoriaEntity categoriaEntity = reviewCategoriaService.addCategoriaToReview (reviewId, categoriaId);
+		return modelMapper.map(categoriaEntity, CategoriaDetailDTO.class);
+	}
 
     /**
      * Obtiene todas las categorías asociadas a una reseña.
@@ -49,11 +57,16 @@ public class ReviewCategoriaController {
      * @param reviewId El ID de la reseña
      * @return Lista de categorías asociadas a la reseña.
      */
+
     @GetMapping(value = "/{reviewId}/categorias")
-    @ResponseStatus(code = HttpStatus.OK)
-    public List<CategoriaEntity> getCategoriasFromReview(@PathVariable("reviewId") Long reviewId) throws EntityNotFoundException {
-        return reviewCategoriaService.getCategoriasByReview(reviewId);
-    }
+	@ResponseStatus(code = HttpStatus.OK)
+	public List<CategoriaDetailDTO> getCategoriasFromReview(@PathVariable("reviewId") Long reviewId) throws EntityNotFoundException {
+		List<CategoriaEntity> categoriaEntity = reviewCategoriaService.getCategoriasByReview(reviewId);
+
+		return modelMapper.map(categoriaEntity, new TypeToken<List<CategoriaDetailDTO>>() {
+		}.getType());
+
+	}
 
     /**
      * Reemplaza la lista de categorías asociadas a una reseña.
@@ -64,10 +77,15 @@ public class ReviewCategoriaController {
      */
     @PutMapping(value = "/{reviewId}/categorias")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<CategoriaEntity> replaceCategoriasInReview(@PathVariable("reviewId") Long reviewId, @RequestBody List<CategoriaEntity> categorias)
-            throws EntityNotFoundException {
-        return reviewCategoriaService.replaceCategoriasInReview(reviewId, categorias);
-    }
+	public List<CategoriaDetailDTO> replaceCategoriasInReview(@PathVariable("reviewId") Long reviewId, @RequestBody List<CategoriaDTO> categorias)
+			throws EntityNotFoundException {
+		List<CategoriaEntity> entities = modelMapper.map(categorias, new TypeToken<List<CategoriaEntity>>() {
+		}.getType());
+        List<CategoriaEntity> categoriaList = reviewCategoriaService.replaceCategoriasInReview(reviewId, entities);
+		return modelMapper.map(categoriaList, new TypeToken<List<CategoriaDetailDTO>>() {
+		}.getType());
+
+	}
 
     /**
      * Elimina la asociación entre una categoría y una reseña.
@@ -77,9 +95,9 @@ public class ReviewCategoriaController {
      */
     @DeleteMapping(value = "/{reviewId}/categorias/{categoriaId}")
     @ResponseStatus(code = HttpStatus.NO_CONTENT)
-    public void removeCategoriaFromReview(@PathVariable("reviewId") Long reviewId, @PathVariable("categoriaId") Long categoriaId)
-            throws EntityNotFoundException {
-        reviewCategoriaService.removeCategoriaFromReview(reviewId, categoriaId);
-    }
+	public void removeArticulo(@PathVariable("reviewId") Long reviewId, @PathVariable("categoriaId") Long categoriaId)
+			throws EntityNotFoundException {
+             reviewCategoriaService.removeCategoriaFromReview(reviewId, categoriaId);;
+	}
 }
 

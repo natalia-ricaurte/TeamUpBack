@@ -3,6 +3,8 @@ package com.example.TeamUp.Controllers;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -16,6 +18,8 @@ import org.springframework.web.bind.annotation.PathVariable;
 
 import com.example.TeamUp.Entities.ReviewEntity;
 import com.example.TeamUp.Services.UsuarioReviewService;
+import com.example.TeamUp.dto.ReviewDTO;
+import com.example.TeamUp.dto.ReviewDetailDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -26,6 +30,9 @@ public class UsuarioReviewController {
     @Autowired
     private UsuarioReviewService usuarioReviewService;
 
+    @Autowired
+    private ModelMapper modelMapper;
+
     /**
      * Asocia una reseña existente a un usuario como escritor.
      *
@@ -35,9 +42,10 @@ public class UsuarioReviewController {
      */
     @PostMapping(value = "/{usuarioId}/reviewsEscritas/{reviewId}")
     @ResponseStatus(code = HttpStatus.OK)
-    public ReviewEntity addReviewEscritaToUsuario(@PathVariable("usuarioId") Long usuarioId, @PathVariable("reviewId") Long reviewId)
+    public ReviewDetailDTO addReviewEscritaToUsuario(@PathVariable("usuarioId") Long usuarioId, @PathVariable("reviewId") Long reviewId)
             throws EntityNotFoundException {
-        return usuarioReviewService.addReviewEscrita(usuarioId, reviewId);
+        ReviewEntity reviewEntity = usuarioReviewService.addReviewEscrita(usuarioId, reviewId);
+        return modelMapper.map(reviewEntity, ReviewDetailDTO.class);
     }
 
     /**
@@ -49,9 +57,10 @@ public class UsuarioReviewController {
      */
     @PostMapping(value = "/{usuarioId}/reviewsRecibidas/{reviewId}")
     @ResponseStatus(code = HttpStatus.OK)
-    public ReviewEntity addReviewRecibidaToUsuario(@PathVariable("usuarioId") Long usuarioId, @PathVariable("reviewId") Long reviewId)
+    public ReviewDetailDTO addReviewRecibidaToUsuario(@PathVariable("usuarioId") Long usuarioId, @PathVariable("reviewId") Long reviewId)
             throws EntityNotFoundException {
-        return usuarioReviewService.addReviewRecibidas(usuarioId, reviewId);
+        ReviewEntity reviewEntity = usuarioReviewService.addReviewRecibidas(usuarioId, reviewId);
+        return modelMapper.map(reviewEntity, ReviewDetailDTO.class);
     }
 
     /**
@@ -62,8 +71,9 @@ public class UsuarioReviewController {
      */
     @GetMapping(value = "/{usuarioId}/reviewsEscritas")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<ReviewEntity> getReviewsEscritasFromUsuario(@PathVariable("usuarioId") Long usuarioId) throws EntityNotFoundException {
-        return usuarioReviewService.getReviewsEscritas(usuarioId);
+    public List<ReviewDetailDTO> getReviewsEscritasFromUsuario(@PathVariable("usuarioId") Long usuarioId) throws EntityNotFoundException {
+        List<ReviewEntity> reviewEntities = usuarioReviewService.getReviewsEscritas(usuarioId);
+        return modelMapper.map(reviewEntities, new TypeToken<List<ReviewDetailDTO>>() {}.getType());
     }
 
     /**
@@ -74,11 +84,10 @@ public class UsuarioReviewController {
      */
     @GetMapping(value = "/{usuarioId}/reviewsRecibidas")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<ReviewEntity> getReviewsRecibidasFromUsuario(@PathVariable("usuarioId") Long usuarioId) throws EntityNotFoundException {
-        return usuarioReviewService.getReviewsRecibidas(usuarioId);
+    public List<ReviewDetailDTO> getReviewsRecibidasFromUsuario(@PathVariable("usuarioId") Long usuarioId) throws EntityNotFoundException {
+        List<ReviewEntity> reviewEntities = usuarioReviewService.getReviewsRecibidas(usuarioId);
+        return modelMapper.map(reviewEntities, new TypeToken<List<ReviewDetailDTO>>() {}.getType());
     }
-
-
 
     /**
      * Reemplaza las reseñas recibidas por un usuario.
@@ -89,9 +98,11 @@ public class UsuarioReviewController {
      */
     @PutMapping(value = "/{usuarioId}/reviewsRecibidas")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<ReviewEntity> replaceReviewsRecibidasInUsuario(@PathVariable("usuarioId") Long usuarioId, @RequestBody List<ReviewEntity> reviews)
+    public List<ReviewDetailDTO> replaceReviewsRecibidasInUsuario(@PathVariable("usuarioId") Long usuarioId, @RequestBody List<ReviewDTO> reviews)
             throws EntityNotFoundException {
-        return usuarioReviewService.replaceReviewsRecibidas(usuarioId, reviews);
+        List<ReviewEntity> reviewEntities = modelMapper.map(reviews, new TypeToken<List<ReviewEntity>>() {}.getType());
+        List<ReviewEntity> updatedReviews = usuarioReviewService.replaceReviewsRecibidas(usuarioId, reviewEntities);
+        return modelMapper.map(updatedReviews, new TypeToken<List<ReviewDetailDTO>>() {}.getType());
     }
 
     /**
@@ -120,4 +131,3 @@ public class UsuarioReviewController {
         usuarioReviewService.removeReviewRecibida(usuarioId, reviewId);
     }
 }
-

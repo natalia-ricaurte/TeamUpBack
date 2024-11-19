@@ -40,6 +40,7 @@ public class ReviewCategoriaService {
         }
 
         categoriaEntity.get().setReview(reviewEntity.get());
+        reviewEntity.get().getCategorias().add(categoriaEntity.get());
         log.info("Finaliza proceso de asociar una categoría con id = {} a la reseña con id = {}", categoriaId, reviewId);
         return categoriaRepository.save(categoriaEntity.get());
     }
@@ -120,6 +121,7 @@ public class ReviewCategoriaService {
         }
 
         categoriaEntity.get().setReview(null);
+        reviewEntity.get().getCategorias().remove(categoriaEntity.get());
         categoriaRepository.save(categoriaEntity.get());
 
         log.info("Finaliza proceso de eliminar la categoría con id = {} de la reseña con id = {}", categoriaId, reviewId);

@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.TeamUp.Entities.CategoriaEntity;
 import com.example.TeamUp.Services.CategoriaService;
+import com.example.TeamUp.dto.CategoriaDTO;
 
 @RestController
 @RequestMapping("/categorias")

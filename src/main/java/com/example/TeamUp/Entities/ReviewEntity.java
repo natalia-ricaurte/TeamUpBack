@@ -21,6 +21,8 @@ public class ReviewEntity {
     private String texto;
     private Integer reputacion;
     private Integer calificacion;
+    private String habilidades;
+    private String email;
 
     @ManyToOne
     //@JsonBackReference
