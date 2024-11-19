@@ -9,7 +9,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class ReviewDetailDTO {
+public class ReviewDetailDTO extends ReviewDTO{
 
     private List<CategoriaDTO> categorias = new ArrayList<>();
 

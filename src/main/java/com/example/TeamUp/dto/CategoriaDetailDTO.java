@@ -6,7 +6,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class CategoriaDetailDTO {
+public class CategoriaDetailDTO extends  CategoriaDTO{
     
 
 }
