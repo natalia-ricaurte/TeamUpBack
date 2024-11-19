@@ -32,7 +32,7 @@ public class UsuarioReviewController {
 
     @Autowired
     private ModelMapper modelMapper;
-
+    
     /**
      * Asocia una reseña existente a un usuario como escritor.
      *
@@ -45,6 +45,7 @@ public class UsuarioReviewController {
     public ReviewDetailDTO addReviewEscritaToUsuario(@PathVariable("usuarioId") Long usuarioId, @PathVariable("reviewId") Long reviewId)
             throws EntityNotFoundException {
         ReviewEntity reviewEntity = usuarioReviewService.addReviewEscrita(usuarioId, reviewId);
+
         return modelMapper.map(reviewEntity, ReviewDetailDTO.class);
     }
 

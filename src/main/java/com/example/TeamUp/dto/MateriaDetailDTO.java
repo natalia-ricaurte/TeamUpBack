@@ -10,7 +10,7 @@ import lombok.Setter;
 @Getter
 @Setter
 
-public class MateriaDetailDTO {
+public class MateriaDetailDTO extends MateriaDTO{
 
     private List<UsuarioDTO> usuarios = new ArrayList<>();
 
