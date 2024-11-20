@@ -58,7 +58,7 @@ public class UsuarioReviewController {
      */
     @PostMapping(value = "/{usuarioId}/reviewsRecibidas/{reviewId}")
     @ResponseStatus(code = HttpStatus.OK)
-    public ReviewDetailDTO addReviewRecibidaToUsuario(@PathVariable("usuarioId") Long usuarioId, @PathVariable("reviewId") Long reviewId)
+    public ReviewDTO addReviewRecibidaToUsuario(@PathVariable("usuarioId") Long usuarioId, @PathVariable("reviewId") Long reviewId)
             throws EntityNotFoundException {
         ReviewEntity reviewEntity = usuarioReviewService.addReviewRecibidas(usuarioId, reviewId);
         return modelMapper.map(reviewEntity, ReviewDetailDTO.class);
@@ -72,9 +72,9 @@ public class UsuarioReviewController {
      */
     @GetMapping(value = "/{usuarioId}/reviewsEscritas")
     @ResponseStatus(code = HttpStatus.OK)
-    public List<ReviewDetailDTO> getReviewsEscritasFromUsuario(@PathVariable("usuarioId") Long usuarioId) throws EntityNotFoundException {
+    public List<ReviewDTO> getReviewsEscritasFromUsuario(@PathVariable("usuarioId") Long usuarioId) throws EntityNotFoundException {
         List<ReviewEntity> reviewEntities = usuarioReviewService.getReviewsEscritas(usuarioId);
-        return modelMapper.map(reviewEntities, new TypeToken<List<ReviewDetailDTO>>() {}.getType());
+        return modelMapper.map(reviewEntities, new TypeToken<List<ReviewDTO>>() {}.getType());
     }
 
     /**

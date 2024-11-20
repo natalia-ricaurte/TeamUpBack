@@ -21,8 +21,7 @@ public class ReviewEntity {
     private String texto;
     private Integer reputacion;
     private Integer calificacion;
-    private String habilidades;
-    private String email;
+    
 
     @ManyToOne
     //@JsonBackReference
@@ -32,8 +31,6 @@ public class ReviewEntity {
     //@JsonBackReference
     private UsuarioEntity usuarioRecibido;
 
-    @ManyToOne
-    private MateriaEntity materia;
 
     @OneToMany(mappedBy = "review", cascade = CascadeType.PERSIST)
     @JsonManagedReference

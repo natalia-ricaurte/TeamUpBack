@@ -7,6 +7,8 @@ import lombok.Setter;
 @Setter
 
 public class CategoriaDetailDTO extends  CategoriaDTO{
+
+    private ReviewDTO review;
     
 
 }

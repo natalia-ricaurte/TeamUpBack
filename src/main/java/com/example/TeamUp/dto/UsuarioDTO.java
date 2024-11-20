@@ -15,5 +15,7 @@ public class UsuarioDTO {
     private String password;
     private Integer reputacion;
     private Integer calificacion;
+    private String email;
+    private String habilidades;
 
 }

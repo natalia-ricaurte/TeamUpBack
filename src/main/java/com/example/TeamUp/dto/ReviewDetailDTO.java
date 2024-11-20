@@ -12,5 +12,7 @@ import lombok.Setter;
 public class ReviewDetailDTO extends ReviewDTO{
 
     private List<CategoriaDTO> categorias = new ArrayList<>();
+    private UsuarioDTO usuarioEscritor;
+    private UsuarioDTO usuarioRecibido;
 
 }

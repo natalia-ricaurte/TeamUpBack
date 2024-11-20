@@ -26,6 +26,20 @@ public class ReviewCategoriaService {
     private CategoriaRepository categoriaRepository;
 
     @Transactional
+    public ReviewEntity addCategoriasToReview(Long reviewId, List<Long> categoriaIds) throws EntityNotFoundException {
+        ReviewEntity review = reviewRepository.findById(reviewId)
+                .orElseThrow(() -> new EntityNotFoundException("La reseña no fue encontrada"));
+
+        List<CategoriaEntity> categorias = categoriaRepository.findAllById(categoriaIds);
+        if (categorias.size() != categoriaIds.size()) {
+            throw new EntityNotFoundException("Una o más categorías no fueron encontradas");
+        }
+
+        review.getCategorias().addAll(categorias);
+        return reviewRepository.save(review);
+    }
+
+    @Transactional
     public CategoriaEntity addCategoriaToReview(Long reviewId, Long categoriaId) throws EntityNotFoundException {
         log.info("Inicia proceso de asociar una categoría con id = {} a la reseña con id = {}", categoriaId, reviewId);
         Optional<ReviewEntity> reviewEntity = reviewRepository.findById(reviewId);

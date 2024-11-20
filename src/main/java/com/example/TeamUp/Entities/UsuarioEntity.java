@@ -23,9 +23,12 @@ public class UsuarioEntity {
     private String nombre;
     private String carrera;
     private String login;
+    private String email;
     private String password;
     private Integer reputacion;
     private Integer calificacion;
+    private String habilidades;
+    
 
     @OneToMany(mappedBy = "usuarioEscritor", cascade = CascadeType.PERSIST)
     //@JsonManagedReference

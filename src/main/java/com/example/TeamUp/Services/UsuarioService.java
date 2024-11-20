@@ -20,6 +20,17 @@ public class UsuarioService {
         this.usuarioRepository = usuarioRepository;
     }
 
+    public UsuarioEntity getUsuarioByEmail(String email) {
+
+        // Utilizamos el método del repositorio para buscar por lemail
+        UsuarioEntity usuario = usuarioRepository.findByEmail(email);
+        if (usuario == null) {
+            throw new RuntimeException("Usuario no encontrado con el email: " + email);
+        }
+        return usuario;
+    }
+
+
     //get todos los usuarios
     public List<UsuarioEntity> getUsuarios() {
         return usuarioRepository.findAll();

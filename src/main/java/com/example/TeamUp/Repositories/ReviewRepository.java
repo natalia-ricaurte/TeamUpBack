@@ -9,5 +9,4 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface ReviewRepository extends JpaRepository<ReviewEntity, Long>  {
     
-    List<ReviewEntity> findByMateriaId(Long materiaId);
 }

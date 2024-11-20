@@ -13,11 +13,6 @@ public class ReviewDTO {
     private String texto;
     private Integer reputacion;
     private Integer calificacion;
-    private String habilidades;
-    private String email;
-    private UsuarioDTO usuarioEscritor;
-    private UsuarioDTO usuarioRecibido;
    
-    
 
 }

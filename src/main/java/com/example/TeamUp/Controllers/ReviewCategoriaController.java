@@ -22,6 +22,7 @@ import com.example.TeamUp.Services.CategoriaReviewService;
 import com.example.TeamUp.Services.ReviewCategoriaService;
 import com.example.TeamUp.dto.CategoriaDTO;
 import com.example.TeamUp.dto.CategoriaDetailDTO;
+import com.example.TeamUp.dto.ReviewDetailDTO;
 
 import jakarta.persistence.EntityNotFoundException;
 
@@ -35,6 +36,21 @@ public class ReviewCategoriaController {
 
     @Autowired
     private ModelMapper modelMapper;
+
+     /**
+     * Añade varias categorías a una reseña.
+     *
+     * @param reviewId El ID de la reseña
+     * @param categoriaIds Lista de IDs de las categorías a añadir
+     * @return La reseña actualizada con las nuevas categorías.
+     */
+    @PostMapping(value = "/{reviewId}/categorias")
+    @ResponseStatus(code = HttpStatus.OK)
+    public ReviewDetailDTO addCategoriasToReview(@PathVariable("reviewId") Long reviewId, @RequestBody List<Long> categoriaIds)
+            throws EntityNotFoundException {
+        ReviewEntity reviewEntity = reviewCategoriaService.addCategoriasToReview(reviewId, categoriaIds);
+        return modelMapper.map(reviewEntity, ReviewDetailDTO.class);
+    }
 
     /**
      * Asocia una categoría existente a una reseña.

@@ -12,6 +12,6 @@ public class CategoriaDTO {
     private String nombre;
     private String descripcion;
     private Float calificacion;
-    private ReviewDTO review;
+    
 
 }
