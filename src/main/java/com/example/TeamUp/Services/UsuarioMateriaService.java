@@ -1,5 +1,6 @@
 package com.example.TeamUp.Services;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -110,4 +111,22 @@ public class UsuarioMateriaService {
 
         log.info("Finaliza proceso de eliminar la materia con id = {} del usuario con id = {}", materiaId, usuarioId);
     }
+
+    @Transactional
+    public UsuarioEntity registrarUsuarioConMaterias(UsuarioEntity usuario, List<Long> materiasIds) throws EntityNotFoundException {
+        
+        List<MateriaEntity> materias = new ArrayList<>();
+        for (Long idMateria : materiasIds) {
+            MateriaEntity materia = materiaRepository.findById(idMateria)
+                    .orElseThrow(() -> new EntityNotFoundException("Materia con id " + idMateria + " no encontrada."));
+            materias.add(materia);
+        }
+
+       
+        usuario.setMaterias(materias);
+
+        
+        return usuarioRepository.save(usuario);
+    }
+
 }

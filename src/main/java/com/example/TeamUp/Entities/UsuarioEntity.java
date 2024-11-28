@@ -23,11 +23,13 @@ public class UsuarioEntity {
     private String nombre;
     private String carrera;
     private String login;
+    private Integer edad;
     private String email;
     private String password;
     private Integer reputacion;
     private Integer calificacion;
-    private String habilidades;
+    
+    private List<String> habilidades;
     
 
     @OneToMany(mappedBy = "usuarioEscritor", cascade = CascadeType.PERSIST)

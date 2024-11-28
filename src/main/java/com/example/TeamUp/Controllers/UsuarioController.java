@@ -1,6 +1,7 @@
 package com.example.TeamUp.Controllers;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.example.TeamUp.Entities.UsuarioEntity;
 import com.example.TeamUp.Services.UsuarioService;
+import com.example.TeamUp.dto.MateriaDTO;
 import com.example.TeamUp.dto.UsuarioDTO;
 import com.example.TeamUp.dto.UsuarioDetailDTO;
 import com.example.TeamUp.exceptions.EntityNotFoundException;
@@ -39,14 +41,31 @@ public class UsuarioController {
     }
 
     @GetMapping("/perfil")
-    public ResponseEntity<UsuarioDetailDTO> getUsuarioPerfil(@RequestParam String email) {
-    UsuarioEntity usuario = usuarioService.getUsuarioByEmail(email);
-    if (usuario == null) {
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+    public ResponseEntity<UsuarioDTO> getUsuarioPerfil(@RequestParam String email) throws EntityNotFoundException {
+        UsuarioEntity usuario = usuarioService.getUsuarioConMaterias(email);
+        if (usuario == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+
+      
+        UsuarioDTO usuarioDTO = modelMapper.map(usuario, UsuarioDTO.class);
+
+       
+        List<MateriaDTO> materiasDTO = usuario.getMaterias().stream()
+            .map(materia -> {
+                MateriaDTO materiaDTO = new MateriaDTO();
+                materiaDTO.setId(materia.getId());
+                materiaDTO.setNombre(materia.getNombre());
+                return materiaDTO;
+            })
+            .collect(Collectors.toList());
+        usuarioDTO.setMateriasIds(materiasDTO);
+
+        return ResponseEntity.ok(usuarioDTO);
     }
-    UsuarioDetailDTO usuarioDTO = modelMapper.map(usuario, UsuarioDetailDTO.class);
-    return ResponseEntity.ok(usuarioDTO);
-}
+
+
+
 
     // Obtener todos los usuarios
     @GetMapping
@@ -76,4 +95,24 @@ public class UsuarioController {
     public void delete(@PathVariable("id") Long id) throws EntityNotFoundException, IllegalOperationException {
         usuarioService.deleteUsuario(id);
     }
+
+    @PostMapping("/auth")
+    public ResponseEntity<?> authenticateUser(@RequestBody UsuarioDTO usuarioDTO) {
+        try {
+            System.out.println("Datos recibidos: " + usuarioDTO); // Agregar este log
+            UsuarioEntity usuario = usuarioService.authenticateUsuario(usuarioDTO.getAction(), usuarioDTO);
+            return ResponseEntity.ok(modelMapper.map(usuario, UsuarioDTO.class));
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Usuario no encontrado.");
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(e.getMessage());
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Error en el servidor.");
+        }
+    }
+
+
+
+
+
 }
